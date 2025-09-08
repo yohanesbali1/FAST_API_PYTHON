@@ -1,0 +1,30 @@
+# Python cache & bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+
+# Environment files
+.env
+.env.*
+
+# Uploads folder
+app/uploads/*
+
+# Local database
+*.db
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Pytest / test cache
+.pytest_cache/
+
+#upload image
+.app/uploads/*

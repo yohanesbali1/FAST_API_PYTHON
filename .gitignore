@@ -1,30 +1,49 @@
-# Python cache & bytecode
+# Python cache and compiled files
 __pycache__/
 *.py[cod]
+*$py.class
 
 # Virtual environments
 .venv/
 venv/
+env/
 
-# Environment files
-.env
-.env.*
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+*.whl
 
-# Uploads folder
-app/uploads/*
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
 
-# Local database
-*.db
+# Unit test / coverage
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+
+# Type checkers
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
 
 # IDE / Editor
 .vscode/
 .idea/
+*.sublime-project
+*.sublime-workspace
 
-# Logs
+# FastAPI specific
+/app/uploads/
+*.db
+*.sqlite3
 *.log
 
-# Pytest / test cache
-.pytest_cache/
-
-#upload image
-.app/uploads/*
+# Environment variables
+.env

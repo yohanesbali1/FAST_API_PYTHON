@@ -1,4 +1,5 @@
 from math import ceil
+from anyio import Path
 from sqlalchemy.orm import Session
 from app.models.book import Book
 from app.schemas.book import BookRequest, ShowBookResponse
@@ -7,7 +8,7 @@ import os
 from uuid import uuid4
 from PIL import Image
 
-UPLOAD_DIR = "/app/uploads/books"
+UPLOAD_DIR = Path("app/uploads/books")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 

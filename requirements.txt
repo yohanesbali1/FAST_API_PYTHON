@@ -4,9 +4,10 @@ sqlalchemy
 pydantic[email]
 pymysql
 python-dotenv
-passlib[bcrypt]
+passlib==1.7.4
+bcrypt==3.2.2
 python-jose[cryptography]
 alembic
 pydantic_settings
-pillow 
+pillow
 python-multipart

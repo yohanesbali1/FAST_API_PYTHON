@@ -16,6 +16,10 @@ class UserResponse(BaseModel):
     id: int
     username: str
     email: EmailStr
+
+    class Config:
+        from_attributes = True  # ✅ ganti orm_mode
+class ShowUser(UserResponse):
     roles: List[RoleResponse] = []
 
     class Config:

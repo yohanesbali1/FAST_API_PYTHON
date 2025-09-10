@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas.role import RoleRequest, RoleResponse, AyncRolePermissionRequest, RoleDetailResponse
 from app.services import role_service
-from app.core.security import get_current_user
+from app.core.security import require_permission
 
 router = APIRouter(
     tags=["Roles"],
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(require_permission("custom_role_permission"))]
 )
 
 

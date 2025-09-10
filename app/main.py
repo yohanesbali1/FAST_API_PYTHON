@@ -1,3 +1,4 @@
+from app.core.openapi import custom_openapi
 from fastapi import FastAPI, HTTPException
 from fastapi.openapi.utils import get_openapi
 from app.routers import auth, user, book, role
@@ -9,6 +10,8 @@ from app.helpers.error_handler import (
 from fastapi.exceptions import RequestValidationError
 
 app = FastAPI(title="FastAPI JWT")
+
+custom_openapi(app)
 
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(HTTPException, http_exception_handler)

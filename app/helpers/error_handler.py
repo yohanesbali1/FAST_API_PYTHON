@@ -7,8 +7,14 @@ from fastapi.responses import JSONResponse
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     errors = []
     for err in exc.errors():
-        # ambil pesan error saja
-        errors.append(err["msg"])
+        field = next((loc for loc in err["loc"] if loc != "body"), None)
+        message = err["msg"]
+        if field:
+            error_text = f"{field.capitalize()} {message}"
+        else:
+            error_text = message
+        errors.append(error_text)
+
     return JSONResponse(
         status_code=422,
         content={"errors": errors},

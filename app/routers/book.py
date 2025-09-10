@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.post("")
+@router.post("", response_model=BookResponse)
 def create_book(
     data: BookRequest = Depends(BookRequest.as_form),
     picture: UploadFile = File(...),

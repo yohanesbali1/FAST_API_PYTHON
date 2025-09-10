@@ -35,10 +35,7 @@ def create_book(db: Session, data: BookRequest, picture: UploadFile):
         # 3. Commit jika semua berhasil
         db.commit()
         db.refresh(db_data)
-        return {
-            "status": 200,
-            "message": "Book created successfully",
-        }
+        return db_data
 
     except Exception as e:
         # Hapus file kalau sudah sempat dibuat

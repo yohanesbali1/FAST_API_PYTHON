@@ -18,7 +18,7 @@ def custom_openapi(app: FastAPI):
             routes=app.routes,
         )
 
-        ERROR_RESPONSES = {
+        RESPONSES = {
             401: {
                 "content": {"application/json": {"schema": HTTPErrorResponse.schema()}},
                 "description": "Unauthorized error",
@@ -47,7 +47,7 @@ def custom_openapi(app: FastAPI):
         for path in openapi_schema["paths"].values():
             for method in path.values():
                 method["responses"].update(
-                    {str(k): v for k, v in ERROR_RESPONSES.items()}
+                    {str(k): v for k, v in RESPONSES.items()}
                 )
 
         app.openapi_schema = openapi_schema

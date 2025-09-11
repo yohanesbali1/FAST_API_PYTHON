@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from typing import Optional
 from sqlalchemy.orm import Session
 from app.models.user import User
-from app.schemas.user import UserCreate, UserResponse
+from app.schemas.user import UserCreate, UserResponse, UserUpdate
 from app.utils.hash import hash_password
 
 
@@ -17,25 +17,36 @@ def create_user(db: Session, user: UserCreate):
     return db_user
 
 
-def update_user(db: Session, user: UserCreate, user_id: int):
+def update_user(db: Session, user: UserUpdate, user_id: int):
     db_user = db.query(User).filter(User.id == user_id).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="data not found")
-    db_user.username = user.username
-    db_user.email = user.email
-    if user.password:
-        db_user.password = hash_password(user.password)
+    updates = {
+        "username": str(user.username).capitalize() if user.username else None,
+        "email": user.email,
+        "password": hash_password(user.password) if user.password else None,
+    }
+
+    for field, value in updates.items():
+        if value is not None:
+            setattr(db_user, field, value)
     db.commit()
     db.refresh(db_user)
     return db_user
 
 
 def get_user_by_username(db: Session, username: str):
-    return db.query(User).filter(User.username == username).first()
+    data= db.query(User).filter(User.username == username).first()
+    if not data:
+        raise HTTPException(status_code=404, detail="data not found")
+    return data
 
 
 def get_user(db: Session, user_id: int):
-    return db.query(User).filter(User.id == user_id).first()
+    data = db.query(User).filter(User.id == user_id).first()
+    if not data:
+        raise HTTPException(status_code=404, detail="data not found")
+    return  UserResponse(**data.__dict__)
 
 
 def list_users(db: Session, search: Optional[str], page: int, per_page: int):
@@ -66,5 +77,11 @@ def list_users(db: Session, search: Optional[str], page: int, per_page: int):
 
 
 def delete_user(db: Session, user_id: int):
-    db.query(User).filter(User.id == user_id).delete()
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="data not found")
+    db.delete(db_user)
     db.commit()
+    return {
+        "status_code": 200,
+        "message": "data deleted"}

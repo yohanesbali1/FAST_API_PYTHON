@@ -56,9 +56,11 @@ def update_book(
             raise HTTPException(status_code=404, detail="Book not found")
 
         # Update data teks
-        db_data.title = data.title
-        db_data.author = data.author
-        db_data.description = data.description
+        fields = ["title", "author", "description"]
+        for field in fields:
+            value = getattr(data, field)
+            if value:  # hanya update jika ada value
+                setattr(db_data, field, value)
 
         # Update picture jika ada
         if picture:
@@ -79,10 +81,7 @@ def update_book(
 
         db.commit()
         db.refresh(db_data)
-        return {
-            "status": 200,
-            "message": "Book updated successfully",
-        }
+        return db_data
 
     except Exception as e:
         db.rollback()
@@ -146,7 +145,7 @@ def show_book(book_id: int, request: Request, db: Session):
     if data.picture:
         base_url = str(request.base_url) + "uploads/"
         data.picture = base_url + data.picture
-    return {"data": ShowBookResponse(**data.__dict__)}
+    return  ShowBookResponse(**data.__dict__)
 
 
 def delete_book(db: Session, book_id: int):
@@ -155,4 +154,4 @@ def delete_book(db: Session, book_id: int):
         raise HTTPException(status_code=404, detail="Book not found")
     db.delete(db_data)
     db.commit()
-    return {"status": 200, "message": "Book deleted successfully"}
+    return {"status_code": 200, "message": "Book deleted successfully"}

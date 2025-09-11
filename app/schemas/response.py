@@ -13,3 +13,7 @@ class HTTPErrorResponse(BaseModel):
 
 class ServerErrorResponse(BaseModel):
     error: str
+
+class ResponseMessage(BaseModel):
+    status_code: int
+    message: str

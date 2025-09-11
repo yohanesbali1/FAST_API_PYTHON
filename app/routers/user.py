@@ -1,13 +1,14 @@
 from app.schemas.response import (
     HTTPErrorResponse,
+    ResponseMessage,
     ServerErrorResponse,
     ValidationErrorResponse,
 )
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from app.database import get_db
-from app.schemas.user import PaginatedUsers, UserCreate, UserResponse
+from app.schemas.user import PaginatedUsers, UserCreate, UserResponse, UserUpdate
 from app.services import user_service
 from app.core.security import require_permission
 
@@ -25,6 +26,7 @@ router = APIRouter(
 @router.post(
     "",
     response_model=UserResponse,
+    status_code = status.HTTP_201_CREATED,
     description="""
 Endpoint untuk membuat pengguna baru.  
 
@@ -45,6 +47,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
 @router.patch(
     "/{user_id}",
+    status_code=status.HTTP_200_OK,
     description="""
 Endpoint untuk **memperbarui data pengguna** berdasarkan user ID.  
 
@@ -62,7 +65,7 @@ Jika gagal:
 - **422 Validation Error** → Format data tidak sesuai  
 """,
 )
-def update_user(user_id: int, user: UserCreate, db: Session = Depends(get_db)):
+def update_user(user_id: int, user: UserUpdate, db: Session = Depends(get_db)):
     return user_service.update_user(db, user, user_id)
 
 
@@ -113,6 +116,7 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
 
 @router.delete(
     "/{user_id}",
+    response_model=ResponseMessage,
     description="""
 Endpoint untuk **menghapus pengguna** berdasarkan ID pengguna.  
 

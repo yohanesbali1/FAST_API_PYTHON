@@ -15,6 +15,7 @@ router = APIRouter(
 
 @router.post(
     "/login",
+    status_code=status.HTTP_200_OK,
     response_model=TokenResponse,
     description="""
 Login endpoint dengan menggunakan username dan password.  

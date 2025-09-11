@@ -1,9 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List
 
 
 class RoleRequest(BaseModel):
-    name: str
+    name: str = Field(..., example="Admin")
 
 class PermissionResponse(BaseModel):
     id: int
@@ -19,3 +19,4 @@ class RoleDetailResponse(RoleResponse):
       
 class AyncRolePermissionRequest(BaseModel):
     permission_ids: List[int]
+    

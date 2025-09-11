@@ -18,7 +18,7 @@ def get_roles(db: Session):
 def update_role(db: Session, data: RoleRequest,role_id: int):
     db_data = db.query(Role).filter(Role.id == role_id).first()
     if not db_data:
-        return None
+        raise HTTPException(status_code=404, detail="Role not found")
     db_data.name = data.name
     db.commit()
     db.refresh(db_data)
@@ -38,7 +38,7 @@ def delete_role(db: Session, role_id: int):
     db.delete(role)
     db.commit()
     return {
-        "status": status.HTTP_200_OK,
+        "status_code": status.HTTP_200_OK,
         "message": f"Role '{role.name}' deleted successfully"
     }
 
@@ -59,4 +59,7 @@ def assign_permission(db: Session, data, role_id:int):
 
     db.commit()
     db.refresh(role)
-    return role
+    return {
+        "status_code": status.HTTP_200_OK,
+        "message": f"Role '{role.name}' updated successfully"
+    }

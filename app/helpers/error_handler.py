@@ -3,7 +3,6 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 
-# custom handler
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     # cek apakah ini JSON invalid
     for err in exc.errors():
@@ -39,6 +38,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         status_code=422,
         content={"errors": error_message},
     )
+
 
 # handler untuk HTTPException
 async def http_exception_handler(request: Request, exc: HTTPException):

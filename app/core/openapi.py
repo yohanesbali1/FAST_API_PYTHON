@@ -18,6 +18,7 @@ def custom_openapi(app: FastAPI):
             routes=app.routes,
         )
 
+        # add custom responses error
         RESPONSES = {
             401: {
                 "content": {"application/json": {"schema": HTTPErrorResponse.schema()}},
@@ -46,9 +47,7 @@ def custom_openapi(app: FastAPI):
         }
         for path in openapi_schema["paths"].values():
             for method in path.values():
-                method["responses"].update(
-                    {str(k): v for k, v in RESPONSES.items()}
-                )
+                method["responses"].update({str(k): v for k, v in RESPONSES.items()})
 
         app.openapi_schema = openapi_schema
         return app.openapi_schema

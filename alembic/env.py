@@ -4,11 +4,10 @@ from sqlalchemy import engine_from_config, pool
 from alembic import context
 
 # Tambahkan root project (fastapi_mysql/) ke sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from app.core.config import settings
 from app.database import Base
-from app.models import user, book  # import model supaya terdaftar di Base.metadata
 
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)

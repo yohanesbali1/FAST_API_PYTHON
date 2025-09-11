@@ -140,7 +140,7 @@ Format konsisten:
 
 ```json
 {
-  "errors": "Username field required; Email value is not a valid email address"
+  "errors": "Username field required [+1 more] "
 }
 ```
 

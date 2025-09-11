@@ -17,7 +17,7 @@ def create_book(db: Session, data: BookRequest, picture: UploadFile):
     file_path = os.path.join(UPLOAD_DIR, filename)
 
     try:
-        # 1. Simpan record di DB (tapi belum commit)
+        # Simpan record di DB (tapi belum commit)
         db_data = Book(
             title=data.title,
             author=data.author,
@@ -27,12 +27,12 @@ def create_book(db: Session, data: BookRequest, picture: UploadFile):
         db.add(db_data)
         db.flush()  # flush dulu biar dapat ID tapi belum commit
 
-        # 2. Proses gambar (kompres + simpan)
+        # Proses gambar (kompres + simpan)
         image = Image.open(picture.file)
         image = image.convert("RGB")
         image.save(file_path, "JPEG", optimize=True, quality=70)
 
-        # 3. Commit jika semua berhasil
+        # Commit jika semua berhasil
         db.commit()
         db.refresh(db_data)
         return db_data
@@ -55,14 +55,12 @@ def update_book(
         if not db_data:
             raise HTTPException(status_code=404, detail="Book not found")
 
-        # Update data teks
         fields = ["title", "author", "description"]
         for field in fields:
             value = getattr(data, field)
-            if value:  # hanya update jika ada value
+            if value:
                 setattr(db_data, field, value)
 
-        # Update picture jika ada
         if picture:
             # Hapus file lama jika ada
             if db_data.picture:
@@ -103,17 +101,11 @@ def get_book(db: Session, request: Request, search: str, page: int, per_page: in
             (Book.title.ilike(f"%{search}%")) | (Book.author.ilike(f"%{search}%"))
         )
 
-    # Total data
     total = query.count()
     total_pages = ceil(total / per_page) if total > 0 else 1
-
-    # Pagination
     books = query.offset((page - 1) * per_page).limit(per_page).all()
-
-    # Base URL untuk gambar
     base_url = str(request.base_url) + "uploads/"
 
-    # Build response data
     data = []
     for book in books:
         picture_url = base_url + book.picture if book.picture else None
@@ -127,7 +119,6 @@ def get_book(db: Session, request: Request, search: str, page: int, per_page: in
             )
         )
 
-    # Meta pagination
     meta = {
         "total": total,
         "page": page,
@@ -145,7 +136,7 @@ def show_book(book_id: int, request: Request, db: Session):
     if data.picture:
         base_url = str(request.base_url) + "uploads/"
         data.picture = base_url + data.picture
-    return  ShowBookResponse(**data.__dict__)
+    return ShowBookResponse(**data.__dict__)
 
 
 def delete_book(db: Session, book_id: int):

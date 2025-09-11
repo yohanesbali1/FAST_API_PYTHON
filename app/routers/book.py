@@ -1,20 +1,35 @@
 from typing import Optional
-from fastapi import APIRouter, Depends, File, Query, UploadFile, HTTPException, Request, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Query,
+    UploadFile,
+    HTTPException,
+    Request,
+    status,
+)
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas.book import BookRequest, BookResponse, BookUpdateRequest, ShowBookResponse
+from app.schemas.book import (
+    BookRequest,
+    BookResponse,
+    BookUpdateRequest,
+    ShowBookResponse,
+)
 from app.services import book_service
-from app.core.security import require_permission, get_current_user
+from app.core.security import require_permission
 
 router = APIRouter(
     tags=["Books"], dependencies=[Depends(require_permission("custom_book"))]
 )
 
 
-@router.post("", 
-             status_code=status.HTTP_201_CREATED,
-             response_model=BookResponse,
-             description="""
+@router.post(
+    "",
+    status_code=status.HTTP_201_CREATED,
+    response_model=BookResponse,
+    description="""
 Endpoint untuk membuat buku baru.  
 
 - **title**: Judul buku, wajib diisi  
@@ -28,9 +43,12 @@ Jika berhasil:
 Jika gagal:
 - **401 Unauthorized** → Token tidak valid atau kedaluwarsa
 - **422 Validation Error** → Input tidak sesuai format yang diharapkan  
-""")
+""",
+)
 def create_book(
-    data: BookRequest = Depends(BookRequest.as_form,),
+    data: BookRequest = Depends(
+        BookRequest.as_form,
+    ),
     picture: UploadFile = File(...),
     db: Session = Depends(get_db),
 ):
@@ -40,8 +58,10 @@ def create_book(
     return book_service.create_book(db, data, picture)
 
 
-@router.patch("/{book_id}",response_model=BookResponse,
-             description="""
+@router.patch(
+    "/{book_id}",
+    response_model=BookResponse,
+    description="""
 Endpoint untuk **mengupdate buku** berdasarkan ID buku.
 
 - **book_id**: ID buku yang ingin diperbarui (path parameter)
@@ -57,7 +77,8 @@ Jika berhasil:
 Jika gagal:
 - **401 Unauthorized** → Token tidak valid atau kedaluwarsa  
 - **422 Validation Error** → Input tidak sesuai format yang diharapkan
-""")
+""",
+)
 def update_book(
     book_id: int,
     data: BookRequest = Depends(BookUpdateRequest.as_form),
@@ -69,13 +90,12 @@ def update_book(
             raise HTTPException(status_code=400, detail="Only images are allowed")
     else:
         picture = None
-    
-    
 
     return book_service.update_book(db, data, book_id, picture)
 
 
-@router.get("",
+@router.get(
+    "",
     summary="Get all Books",
     description="""
 Mengambil daftar buku dengan dukungan **pagination**.  
@@ -88,7 +108,8 @@ Query parameter:
 Response:
 - **200 OK** → Daftar pengguna beserta metadata pagination  
 - **401 Unauthorized** → Token tidak valid atau kedaluwarsa  
-""",)
+""",
+)
 def get_book(
     request: Request,
     db: Session = Depends(get_db),
@@ -99,9 +120,10 @@ def get_book(
     return book_service.get_book(db, request, search, page, per_page)
 
 
-@router.get("/{book_id}",
-            response_model=ShowBookResponse,
-            description="""
+@router.get(
+    "/{book_id}",
+    response_model=ShowBookResponse,
+    description="""
 Endpoint untuk mengambil data buku.  
 
 - **book_id** : ID buku yang ingin diambil. Jika tidak disertakan, akan mengembalikan daftar semua buku.  
@@ -112,12 +134,15 @@ Jika berhasil:
 Jika gagal:
 - **401 Unauthorized** → Token tidak valid atau kedaluwarsa  
 - **404 Not Found** → Buku dengan ID tersebut tidak ditemukan  
-""")
+""",
+)
 def show_book(book_id: int, request: Request, db: Session = Depends(get_db)):
     return book_service.show_book(book_id, request, db)
 
 
-@router.delete("/{book_id}", description="""
+@router.delete(
+    "/{book_id}",
+    description="""
 Endpoint untuk **menghapus buku** berdasarkan ID buku.  
 
 - **book_id** (path parameter): ID buku yang ingin dihapus  
@@ -127,6 +152,7 @@ Jika berhasil:
 Jika gagal:
 - **401 Unauthorized** → Token tidak valid atau kedaluwarsa  
 - **404 Not Found** → Buku dengan ID tersebut tidak ditemukan  
-""",)
+""",
+)
 def delete_book(book_id: int, db: Session = Depends(get_db)):
     return book_service.delete_book(db, book_id)

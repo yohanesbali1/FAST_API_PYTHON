@@ -1,8 +1,5 @@
 from app.schemas.response import (
-    HTTPErrorResponse,
     ResponseMessage,
-    ServerErrorResponse,
-    ValidationErrorResponse,
 )
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
@@ -26,7 +23,7 @@ router = APIRouter(
 @router.post(
     "",
     response_model=UserResponse,
-    status_code = status.HTTP_201_CREATED,
+    status_code=status.HTTP_201_CREATED,
     description="""
 Endpoint untuk membuat pengguna baru.  
 

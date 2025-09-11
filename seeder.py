@@ -1,12 +1,12 @@
 from app.database import SessionLocal
 from app.models.role import Role, Permission
 from app.models.user import User
-from app.utils.hash import hash_password   
+from app.utils.hash import hash_password
+
 
 def seed():
     db = SessionLocal()
     try:
-        
 
         # Permissions
         permission_book = Permission(name="custom_book")
@@ -20,15 +20,28 @@ def seed():
         data_user = User(
             username="admin",
             email="admin@example.com",
-            password= hash_password("password")
+            password=hash_password("password"),
         )
         # Assign permissions
-        admin.permissions = [permission_book, permission_role_permission, permission_user]
+        admin.permissions = [
+            permission_book,
+            permission_role_permission,
+            permission_user,
+        ]
 
+        # Assign roles
         data_user.roles = [admin]
 
         # Commit ke DB
-        db.add_all([admin,data_user,  permission_book, permission_role_permission, permission_user])
+        db.add_all(
+            [
+                admin,
+                data_user,
+                permission_book,
+                permission_role_permission,
+                permission_user,
+            ]
+        )
         db.commit()
         print("Seeding done!")
     except Exception as e:

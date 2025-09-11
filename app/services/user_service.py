@@ -36,7 +36,7 @@ def update_user(db: Session, user: UserUpdate, user_id: int):
 
 
 def get_user_by_username(db: Session, username: str):
-    data= db.query(User).filter(User.username == username).first()
+    data = db.query(User).filter(User.username == username).first()
     if not data:
         raise HTTPException(status_code=404, detail="data not found")
     return data
@@ -46,7 +46,7 @@ def get_user(db: Session, user_id: int):
     data = db.query(User).filter(User.id == user_id).first()
     if not data:
         raise HTTPException(status_code=404, detail="data not found")
-    return  UserResponse(**data.__dict__)
+    return UserResponse(**data.__dict__)
 
 
 def list_users(db: Session, search: Optional[str], page: int, per_page: int):
@@ -56,7 +56,6 @@ def list_users(db: Session, search: Optional[str], page: int, per_page: int):
             User.username.contains(search) | User.email.contains(search)
         )
 
-    # Meta pagination
     total = query.count()
     total_pages = ceil(total / per_page) if total > 0 else 1
 
@@ -82,6 +81,4 @@ def delete_user(db: Session, user_id: int):
         raise HTTPException(status_code=404, detail="data not found")
     db.delete(db_user)
     db.commit()
-    return {
-        "status_code": 200,
-        "message": "data deleted"}
+    return {"status_code": 200, "message": "data deleted"}
